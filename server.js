@@ -149,7 +149,7 @@ async function getRandGameFromVanityUser(vanityUser, jsonFileName, urlHead, req,
     });}
 
 app.get('/', function(req, res) {
-/*
+
     let jsonFileName="data/server.json";
     let url = 'https://api.steampowered.com/ISteamWebAPIUtil/GetServerInfo/v1/';
     //sendToJSONFile(url,jsonFileName,req, res);
@@ -157,8 +157,7 @@ app.get('/', function(req, res) {
         sendTheFile(jsonFileName,req, res)
     });
 
- */
-    res.sendFile("data/undefined.json",jsonFileOptions)
+
 });
 
 app.get('/user/:user', function(req, res) {
@@ -318,5 +317,11 @@ function sendGamefromID(id, req, res){
 app.use('/static', express.static('public'));
 
 var port = 4000;
-var server = app.listen(port);
-console.log('Listening on port ' + port);
+//var server = app.listen(port);
+//var server = app.listen(process.env.PORT || port);
+var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
+var server_host = process.env.YOUR_HOST || '0.0.0.0';
+app.listen(server_port, server_host, function() {
+    console.log('Listening on port %d', server_port);
+});
+//console.log('Listening on port ' + port);
