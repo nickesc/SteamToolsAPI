@@ -316,13 +316,13 @@ function sendGamefromID(id, req, res){
 
 app.use('/static', express.static('public'));
 
-var port = 4000;
+//var port = 4000;
 //var server = app.listen(port);
 //var server = app.listen(process.env.PORT || port);
-var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
-var server_host = process.env.YOUR_HOST || '0.0.0.0';
+//var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
+//var server_host = process.env.YOUR_HOST || '0.0.0.0';
 module.exports=app;
-app.listen(server_port, server_host, function() {
-    console.log('Listening on port %d', server_port);
-});
+//app.listen(server_port, server_host, function() {
+//    console.log('Listening on port %d', server_port);
+//});
 //console.log('Listening on port ' + port);
