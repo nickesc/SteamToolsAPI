@@ -149,13 +149,16 @@ async function getRandGameFromVanityUser(vanityUser, jsonFileName, urlHead, req,
     });}
 
 app.get('/', function(req, res) {
-
+/*
     let jsonFileName="data/server.json";
     let url = 'https://api.steampowered.com/ISteamWebAPIUtil/GetServerInfo/v1/';
     //sendToJSONFile(url,jsonFileName,req, res);
     writeToJSONFile(url,jsonFileName,req,res,function(jsonFileName, req, res){
         sendTheFile(jsonFileName,req, res)
     });
+
+ */
+    res.sendFile("data/undefined.json",jsonFileOptions)
 });
 
 app.get('/user/:user', function(req, res) {
