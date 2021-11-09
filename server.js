@@ -3,8 +3,11 @@ var express = require('express');
 var fs = require('fs');
 var request = require('request');
 var path = require('path');
+var cors = require('cors');
 var app = express();
 //app.set('view engine', 'ejs');
+
+app.use(cors());
 
 var jsonFileOptions = {
     root: path.join(__dirname)
