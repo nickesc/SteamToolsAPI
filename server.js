@@ -14,6 +14,14 @@ var jsonFileOptions = {
 };
 
 class InitPaths {
+    static jsonOptions(sign="&"){
+        let language= "english"
+        let currency= "us"
+        let format = "json"
+
+        return `${sign}l=${language}&cc=${currency}&${format}`
+    }
+
     static gameFileNames(appid) {
         let fileNames = {};
 
@@ -28,11 +36,11 @@ class InitPaths {
 
     static gameURLs(appid, req) {
         let urls = {};
-        urls.infoURL = 'http://store.steampowered.com/api/appdetails?appids=' + appid;
-        urls.newsURL = 'http://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid=' + appid + '&format=json';
-        urls.schemaURL = 'https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?appid=' + appid + "&key=" + req.query.key;
-        urls.achievURL = 'https://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/?format=json&gameid=' + appid;
-        urls.currentURL = 'https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?format=json&appid=' + appid;
+        urls.infoURL = 'http://store.steampowered.com/api/appdetails?appids=' + appid + this.jsonOptions();
+        urls.newsURL = 'http://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid=' + appid + this.jsonOptions();
+        urls.schemaURL = 'https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?appid=' + appid + "&key=" + req.query.key + this.jsonOptions();
+        urls.achievURL = 'https://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/?gameid=' + appid + this.jsonOptions();
+        urls.currentURL = 'https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=' + appid + this.jsonOptions();
         return urls;
     }
 
@@ -54,13 +62,13 @@ class InitPaths {
     static userHeads(req){
         let urls = {};
 
-        urls.infoHead = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?format=json&key=' + req.query.key + '&steamids=';
-        urls.bansHead = 'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?format=json&key=' + req.query.key + '&steamids=';
+        urls.infoHead = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + req.query.key + '&steamids=';
+        urls.bansHead = 'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=' + req.query.key + '&steamids=';
         urls.levelHead = 'https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=' + req.query.key + '&steamid=';
-        urls.recentHead = 'http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?format=json&key=' + req.query.key + '&steamid=';
+        urls.recentHead = 'http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=' + req.query.key + '&steamid=';
         urls.badgesHead = 'https://api.steampowered.com/IPlayerService/GetBadges/v1/?key=' + req.query.key + '&steamid=';
-        urls.friendsHead = 'https://api.steampowered.com/ISteamUser/GetFriendList/v1/?format=json&key=' + req.query.key + '&steamid=';
-        urls.gameListHead = 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?format=json&key=' + req.query.key + '&steamid=';
+        urls.friendsHead = 'https://api.steampowered.com/ISteamUser/GetFriendList/v1/?key=' + req.query.key + '&steamid=';
+        urls.gameListHead = 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=' + req.query.key + '&steamid=';
 
         return urls;
     }
@@ -70,13 +78,13 @@ class InitPaths {
         let heads = this.userHeads(req);
         let urls=[];
 
-        urls.infoURL = heads.infoHead + steamid;
-        urls.bansURL = heads.bansHead + steamid;
-        urls.levelURL = heads.levelHead + steamid;
-        urls.recentURL = heads.recentHead + steamid;
-        urls.badgesURL = heads.badgesHead + steamid;
-        urls.friendsURL = heads.friendsHead + steamid;
-        urls.gameListURL = heads.gameListHead + steamid;
+        urls.infoURL = heads.infoHead + steamid + this.jsonOptions();
+        urls.bansURL = heads.bansHead + steamid + this.jsonOptions();
+        urls.levelURL = heads.levelHead + steamid + this.jsonOptions();
+        urls.recentURL = heads.recentHead + steamid + this.jsonOptions();
+        urls.badgesURL = heads.badgesHead + steamid + this.jsonOptions();
+        urls.friendsURL = heads.friendsHead + steamid + this.jsonOptions();
+        urls.gameListURL = heads.gameListHead + steamid + this.jsonOptions();
         return urls;
     }
 
@@ -91,20 +99,24 @@ class InitPaths {
 
     static statsHeads(appid, req){
         let urls = {};
-        urls.userStatsHead = 'http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?format=json&appid=' + appid + '&key=' + req.query.key + '&steamid='
+        urls.userStatsHead = 'http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=' + appid + '&key=' + req.query.key + '&steamid='
         return urls;
     }
 
     static statsURLs(steamid, appid, req) {
         let urls = {};
 
-        urls.statsURL = 'http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?format=json&appid=' + appid + '&key=' + req.query.key + '&steamid=' + steamid;
-        urls.achievURL = this.statsHeads(appid, req).userStatsHead + steamid;
+        urls.statsURL = 'http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=' + appid + '&key=' + req.query.key + '&steamid=' + steamid + this.jsonOptions();
+        urls.achievURL = this.statsHeads(appid, req).userStatsHead + steamid + this.jsonOptions();
         return urls;
     }
 
     static vanityUserURL(req, vanityUser) {
-        return 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=' + req.query.key + '&vanityurl=' + vanityUser + '&format=json'
+        return 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=' + req.query.key + '&vanityurl=' + vanityUser + this.jsonOptions();
+    }
+
+    static vanityUserFileName(steamid){
+        return 'data/'+steamid+'vanity.json'
     }
 
     static serverFiles(){
@@ -117,8 +129,8 @@ class InitPaths {
 
     static staticURLs(){
         let urls={}
-        urls.pingURL='https://api.steampowered.com/ISteamWebAPIUtil/GetServerInfo/v1/';
-        urls.appListURL='https://api.steampowered.com/ISteamApps/GetAppList/v2/?format=json';
+        urls.pingURL='https://api.steampowered.com/ISteamWebAPIUtil/GetServerInfo/v1/' + this.jsonOptions("?");
+        urls.appListURL='https://api.steampowered.com/ISteamApps/GetAppList/v2/' + this.jsonOptions("?");
         return urls;
     }
 
@@ -370,7 +382,7 @@ function sendFullUserFromID(steamid, vanity, req, res){
 
 function sendUserStatsFromAppid(appid, steamid, vanity, req, res){
 
-    console.log(steamid)
+    //console.log(steamid)
     let fileNames=InitPaths.statsFileNames(vanity, appid);
     let urls=InitPaths.statsURLs(steamid, appid, req);
 
@@ -457,6 +469,54 @@ app.get('/user/:user/fullUser', function(req, res) {
         })
 });
 
+app.get('/vanity/:steamid', function (req, res){
+    let steamid = req.params.steamid;
+
+    let jsonFileName = InitPaths.userFileNames(steamid).infoJSON;
+
+    let url = InitPaths.userURLs(steamid,req).infoURL;
+
+
+    writeToJSONFile(url,jsonFileName,req,res,function(jsonFileName, req, res){
+
+        let jsonFile = fs.readFileSync(jsonFileName);
+        let resp = JSON.parse(jsonFile).response.players
+        let steamid = {}
+
+        try{
+            steamid.steamid=resp[0].steamid;
+            try{
+                steamid.vanity=resp[0].personaname;
+            }
+            catch{
+                console.log("No vanity found for "+steamid.steamid)
+            }
+            try{
+                steamid.realName=resp[0].realname;
+            }
+            catch{
+                console.log("No real name found for "+steamid.steamid)
+            }
+
+            let path = InitPaths.vanityUserFileName(steamid.steamid)
+
+            justWrite(steamid,path)
+            deleteFile(jsonFileName)
+            //console.log(steamid)
+            sendJSONFile(path,req, res)
+        }
+        catch{
+            sendUndefined(req,res)
+            deleteFile(jsonFileName)
+        }
+
+
+
+
+
+    });
+
+})
 
 // User Games Calls
 
