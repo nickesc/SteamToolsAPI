@@ -508,8 +508,7 @@ function sendJSONFile(jsonFileName, req, res, reset=false){
             if (err) {
                 console.error(err);
             } else {
-                //writeLog('Sent: ' + jsonFileName, req.ip);
-                console.log('Sent: ' + jsonFileName)
+                writeLog('Sent: ' + jsonFileName, req.ip);
                 deleteFile(jsonFileName, false)
             }
         });
@@ -519,8 +518,7 @@ function sendJSONFile(jsonFileName, req, res, reset=false){
             if (err) {
                 console.error(err);
             } else {
-                //writeLog('Sent: ' + jsonFileName, req.ip);
-                console.log('Sent: ' + jsonFileName)
+                writeLog('Sent: ' + jsonFileName, req.ip);
                 deleteFile(jsonFileName, true)
             }
         });
@@ -1124,11 +1122,10 @@ app.get('/user/:user/games/:appid/stats', function(req, res) {
 
 app.use('/static', express.static('public'));
 
-//const source = InitPaths.host('remote')
+const source = InitPaths.host('remote')
 
 
 app.listen(server_port, server_host, function() {
-    //fs.appendFileSync(InitPaths.serverFiles().consoleLog,'------------------------------------------------------------\r\n')
-    //writeLog('SERVER START',source);
-    console.log('SERVER START')
+    fs.appendFileSync(InitPaths.serverFiles().consoleLog,'------------------------------------------------------------\r\n')
+    writeLog('SERVER START',source);
 });
