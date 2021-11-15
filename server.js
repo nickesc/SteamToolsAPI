@@ -145,7 +145,7 @@ class InitPaths {
         fileNames.appListJSON = this.dataDir + '/games.json'
         fileNames.undefinedJSON = this.dataDir + '/undefined.json'
         fileNames.pingJSON = this.dataDir + '/ping.json'
-        fileNames.ipLog = this.logDir + '/ips.log'
+        fileNames.ipLog = this.logDir + '/ip.log'
         fileNames.consoleLog = this.logDir + '/console.log'
         fileNames.ignore=[fileNames.undefinedJSON, fileNames.pingJSON]
         return fileNames;
@@ -167,6 +167,10 @@ class InitPaths {
         else{
             return 'https://steam-tools-nickesc.herokuapp.com'
         }
+    }
+
+    static ignored(){
+        return([this.serverFiles().undefinedJSON,this.serverFiles().pingJSON,this.serverFiles().ipLog,this.serverFiles().consoleLog])
     }
 
 
@@ -192,7 +196,7 @@ function writeLog(logLine, ip = null){
 
 function clearDir(directory){
     //const directory = 'test';
-    const ignore = InitPaths.serverFiles().ignore
+    const ignore = InitPaths.ignored()
 
     fs.readdir(directory, (err, files) => {
         if (err) throw err;
@@ -409,7 +413,7 @@ function writeToJSONFile(url, jsonFileName, req, res, action) {
 
     try {
 
-        if (fs.existsSync(jsonFileName)===false || InitPaths.serverFiles().ignore.includes(jsonFileName)) {
+        if (fs.existsSync(jsonFileName)===false || InitPaths.ignored().includes(jsonFileName)) {
 
             request.get(url, function(error, steamHttpResponse, steamHttpBody) {
                 try {
@@ -417,9 +421,9 @@ function writeToJSONFile(url, jsonFileName, req, res, action) {
 
                     if (jsonFileName===InitPaths.serverFiles().pingJSON){
 
-                        const ip=req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                        fs.appendFileSync(InitPaths.serverFiles().ipLog,ip)
-
+                        const ip=getIP(req);
+                        fs.appendFileSync(InitPaths.serverFiles().ipLog,ip+',\r\n')
+                        data.ip=ip
                     }
                     let jsonString = JSON.stringify(data);
 
@@ -458,7 +462,7 @@ function readFromJSONFile(jsonFileName){
 
 function deleteFile(filePath, override = false, log = true){
     //writeLog("deletefile: "+reset)
-    const ignore = InitPaths.serverFiles().ignore
+    const ignore = InitPaths.ignored()
     ignore.push(InitPaths.serverFiles().appListJSON)
     if (ignore.includes(filePath)===false && override===false) {
         fs.unlink(filePath, function (err) {
@@ -496,7 +500,7 @@ function sendUndefined(req, res){
         if (err) {
             console.error(err);
         } else {
-            writeLog('Sent: ' + jsonFileName, req.ip);
+            writeLog('Sent: ' + jsonFileName, getIP(req));
         }
     });
 }
@@ -508,7 +512,7 @@ function sendJSONFile(jsonFileName, req, res, reset=false){
             if (err) {
                 console.error(err);
             } else {
-                writeLog('Sent: ' + jsonFileName, req.ip);
+                writeLog('Sent: ' + jsonFileName, getIP(req));
                 deleteFile(jsonFileName, false)
             }
         });
@@ -518,7 +522,7 @@ function sendJSONFile(jsonFileName, req, res, reset=false){
             if (err) {
                 console.error(err);
             } else {
-                writeLog('Sent: ' + jsonFileName, req.ip);
+                writeLog('Sent: ' + jsonFileName, getIP(req));
                 deleteFile(jsonFileName, true)
             }
         });
@@ -586,8 +590,7 @@ async function getIDFromVanityUser(vanityUser, jsonFileName, urlHead, req, res, 
     let response = await got(idUrl, {json: true})
     let id=response.body.response.steamid;
     if(log) {
-        let ip=req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        writeLog(vanityUser + " found; SteamID: " + id, ip);
+        writeLog(vanityUser + " found; SteamID: " + id);
     }
 
     const myPromise = new Promise((resolve, reject) => {
@@ -768,6 +771,14 @@ function sendFeatured(req, res){
 
 }
 
+function getURL(req){
+    return req.protocol + '://' + req.get('host') + req.originalUrl;
+}
+
+function getIP(req){
+    return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+}
+
 
 // deprecated: no longer needed
 function sendGameFromID(appid, req, res) {
@@ -790,7 +801,7 @@ function deleteArrayOfPaths(fileNames){
 // Root
 
 app.get('/', function(req, res) {
-
+    writeLog("GET "+getURL(req),getIP(req))
     let jsonFileName=InitPaths.serverFiles().pingJSON;
     let url = InitPaths.staticURLs().pingURL;
     //sendToJSONFile(url,jsonFileName,req, res);
@@ -802,10 +813,28 @@ app.get('/', function(req, res) {
 
 });
 
+app.get('/logs/:log', function(req, res) {
+    writeLog("GET "+getURL(req),getIP(req))
+    let jsonFileName=InitPaths.serverFiles().consoleLog;
+    if(req.params.log==="ip"){
+        jsonFileName=InitPaths.serverFiles().ipLog;
+    }
+    if(req.params.log==="latest"){
+        jsonFileName=InitPaths.serverFiles().pingJSON;
+    }
+
+    let url = InitPaths.staticURLs().pingURL;
+    //sendToJSONFile(url,jsonFileName,req, res);
+    sendJSONFile(jsonFileName,req, res)
+    //clearDir(InitPaths.dataDir)
+
+
+});
 
 // User Calls
 
 app.get('/user/:user', function(req, res) {
+    writeLog("GET "+getURL(req),getIP(req))
     let jsonFileName=InitPaths.userFileNames(req.params.user).infoJSON;
     let urlHead = InitPaths.userHeads(req).infoHead;
 
@@ -819,6 +848,7 @@ app.get('/user/:user', function(req, res) {
 });
 
 app.get('/user/:user/fullUser', function(req, res) {
+    writeLog("GET "+getURL(req),getIP(req))
     let vanity = req.params.user
     let jsonFileName=InitPaths.userFileNames(vanity).fullPlayerJSON;
     let urlHead = InitPaths.userHeads(req).infoHead;
@@ -833,6 +863,7 @@ app.get('/user/:user/fullUser', function(req, res) {
 });
 
 app.get('/vanity/:steamid', function (req, res){
+    writeLog("GET "+getURL(req),getIP(req))
     let steamid = req.params.steamid;
 
     let jsonFileName = InitPaths.userFileNames(steamid).infoJSON;
@@ -884,6 +915,7 @@ app.get('/vanity/:steamid', function (req, res){
 // User Games Calls
 
 app.get('/user/:user/games', function(req, res) {
+    writeLog("GET "+getURL(req),getIP(req))
     let vanity = req.params.user
     let jsonFileName=InitPaths.userFileNames(vanity).gameListJSON;
     let urlHead = InitPaths.userHeads(req).gameListHead;
@@ -898,6 +930,7 @@ app.get('/user/:user/games', function(req, res) {
 });
 
 app.get('/user/:user/games/rand', function(req, res) {
+    writeLog("GET "+getURL(req),getIP(req))
     let vanity = req.params.user
     let jsonFileName=InitPaths.userFileNames(vanity).randGameJSON;
     let urlHead = InitPaths.userHeads(req).gameListHead;
@@ -926,6 +959,7 @@ app.get('/user/:user/games/rand', function(req, res) {
 });
 
 app.get('/user/:user/games/:appid/userStats', function(req, res) {
+    writeLog("GET "+getURL(req),getIP(req))
     let vanity=req.params.user
     let appid=req.params.appid
     let jsonFileName=InitPaths.statsFileNames(vanity, appid).userStatsJSON;
@@ -944,6 +978,7 @@ app.get('/user/:user/games/:appid/userStats', function(req, res) {
 // App Info Calls
 
 app.get('/apps', function(req, res) {
+    writeLog("GET "+getURL(req),getIP(req))
     let jsonFileName= InitPaths.serverFiles().appListJSON;
     let url = InitPaths.staticURLs().appListURL;
     writeToJSONFile(url,jsonFileName,req,res,function(jsonFileName, req, res){
@@ -957,6 +992,7 @@ app.get('/apps', function(req, res) {
 });
 
 app.get('/apps/rand', function(req, res) {
+    writeLog("GET "+getURL(req),getIP(req))
     let jsonFileName= InitPaths.serverFiles().appListJSON;
     let url = InitPaths.staticURLs().appListURL;
     writeToJSONFile(url,jsonFileName,req,res,function(jsonFileName, req, res){
@@ -971,13 +1007,13 @@ app.get('/apps/rand', function(req, res) {
 });
 
 app.get('/apps/:appid/infoFull', function(req, res) {
-
+    writeLog("GET "+getURL(req),getIP(req))
     sendFullGameFromID(req.params.appid, req, res,)
 
 });
 
 app.get('/apps/featured', function(req, res) {
-
+    writeLog("GET "+getURL(req),getIP(req))
     sendFeatured(req, res,)
 
 });
