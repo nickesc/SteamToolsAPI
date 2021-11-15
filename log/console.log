@@ -1,0 +1,77 @@
+------------------------------------------------------------
+11/15/2021-12:34:27-AM-PST | localhost:5000 | SERVER START
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/ping.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/games.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/games.json
+11/15/2021-12:34:27-AM-PST | Removed: data/games.json
+11/15/2021-12:34:27-AM-PST | [object Object]
+11/15/2021-12:34:27-AM-PST | Removed: data/1202140GameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/1202140NewsData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/1202140SchemaData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/1202140GlobalAchievData.json
+11/15/2021-12:34:27-AM-PST | no recommendations found for 1202140
+11/15/2021-12:34:27-AM-PST | Removed: data/1202140CurrentData.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/1202140FullGameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/1202140FullGameData.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/16810GameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/16810GameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/16810GameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/16810NewsData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/16810SchemaData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/16810GlobalAchievData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/16810CurrentData.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/16810FullGameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/16810FullGameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/365720GameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/365720NewsData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/365720SchemaData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/365720GlobalAchievData.json
+11/15/2021-12:34:27-AM-PST | no recommendations found for 365720
+11/15/2021-12:34:27-AM-PST | Removed: data/365720CurrentData.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/365720FullGameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/365720FullGameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/featured.json
+11/15/2021-12:34:27-AM-PST | Removed: data/featuredCats.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/fullFeatured.json
+11/15/2021-12:34:27-AM-PST | Removed: data/fullFeatured.json
+11/15/2021-12:34:27-AM-PST | Removed: data/featured.json
+11/15/2021-12:34:27-AM-PST | Removed: data/featuredCats.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/fullFeatured.json
+11/15/2021-12:34:27-AM-PST | Removed: data/fullFeatured.json
+11/15/2021-12:34:27-AM-PST | Removed: data/76561198065523075data.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/76561198065523075vanity.json
+11/15/2021-12:34:27-AM-PST | Removed: data/76561198065523075vanity.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | goofyshnoofy found; SteamID: 76561198065523075
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/goofyshnoofydata.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofydata.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | goofyshnoofy found; SteamID: 76561198065523075
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofydata.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofyBans.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofyLevelData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofyRecent.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofybadgesData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofyFriendsData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofyGameList.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/goofyshnoofyFullPlayerData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofyFullPlayerData.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | goofyshnoofy found; SteamID: 76561198065523075
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/goofyshnoofyGameList.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofyGameList.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | goofyshnoofy found; SteamID: 76561198065523075
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofyRandGame.json
+11/15/2021-12:34:27-AM-PST | Removed: data/959520GameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/959520NewsData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/959520SchemaData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/959520GlobalAchievData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/959520CurrentData.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/959520FullGameData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/959520FullGameData.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | goofyshnoofy found; SteamID: 76561198065523075
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofy16810StatData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofy16810AchievData.json
+11/15/2021-12:34:27-AM-PST | 127.0.0.1 | Sent: data/goofyshnoofy16810UserStatsData.json
+11/15/2021-12:34:27-AM-PST | Removed: data/goofyshnoofy16810UserStatsData.json
+------------------------------------------------------------
+11/15/2021-12:36:51-AM-PST | localhost:5000 | SERVER START
+------------------------------------------------------------
+11/15/2021-12:44:44-AM-PST | https://steam-tools-nickesc.herokuapp.com | SERVER START

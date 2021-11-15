@@ -26,7 +26,7 @@ currentTime = replaceAll(currentTime,',','')
 class InitPaths {
 
     static dataDir = 'data'
-    static logDir = 'logs'
+    static logDir = 'log'
 
     static jsonOptions(sign='&'){
         let language= 'english'
