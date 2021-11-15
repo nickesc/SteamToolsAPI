@@ -9,28 +9,42 @@ var app = express();
 
 app.use(cors());
 
-var jsonFileOptions = {
+const jsonFileOptions = {
     root: path.join(__dirname)
 };
 
-class InitPaths {
-    static jsonOptions(sign="&"){
-        let language= "english"
-        let currency= "us"
-        let format = "json"
+var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
+var server_host = process.env.YOUR_HOST || '0.0.0.0';
 
-        return `${sign}l=${language}&cc=${currency}&${format}`
+const ts = Date.now();
+let currentTime = new Date(ts).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }) + ' PST';
+
+currentTime = replaceAll(currentTime,' ','-')
+currentTime = replaceAll(currentTime,',','')
+
+
+class InitPaths {
+
+    static dataDir = 'data'
+    static logDir = 'logs'
+
+    static jsonOptions(sign='&'){
+        let language= 'english'
+        let currency= 'us'
+        let format = 'json'
+
+        return `${sign}l=${language}&cc=${currency}&format=${format}`
     }
 
     static gameFileNames(appid) {
         let fileNames = {};
 
-        fileNames.fullGameJSON = "data/" + appid + "FullGameData.json";
-        fileNames.infoJSON = "data/" + appid + "GameData.json";
-        fileNames.newsJSON = "data/" + appid + "NewsData.json";
-        fileNames.schemaJSON = "data/" + appid + "SchemaData.json";
-        fileNames.achievJSON = "data/" + appid + "GlobalAchievData.json";
-        fileNames.currentJSON = "data/" + appid + "CurrentData.json";
+        fileNames.fullGameJSON = this.dataDir + '/' + appid + 'FullGameData.json';
+        fileNames.infoJSON = this.dataDir + '/' + appid + 'GameData.json';
+        fileNames.newsJSON = this.dataDir + '/' + appid + 'NewsData.json';
+        fileNames.schemaJSON = this.dataDir + '/' + appid + 'SchemaData.json';
+        fileNames.achievJSON = this.dataDir + '/' + appid + 'GlobalAchievData.json';
+        fileNames.currentJSON = this.dataDir + '/' + appid + 'CurrentData.json';
         return fileNames;
     }
 
@@ -38,24 +52,31 @@ class InitPaths {
         let urls = {};
         urls.infoURL = 'http://store.steampowered.com/api/appdetails?appids=' + appid + this.jsonOptions();
         urls.newsURL = 'http://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid=' + appid + this.jsonOptions();
-        urls.schemaURL = 'https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?appid=' + appid + "&key=" + req.query.key + this.jsonOptions();
+        urls.schemaURL = 'https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?appid=' + appid + '&key=' + req.query.key + this.jsonOptions();
         urls.achievURL = 'https://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/?gameid=' + appid + this.jsonOptions();
         urls.currentURL = 'https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=' + appid + this.jsonOptions();
         return urls;
     }
 
+    static featuredFileNames(){
+        let fileNames={}
+        fileNames.fullFeaturedJSON = this.dataDir + '/fullFeatured.json'
+        fileNames.featuredJSON = this.dataDir + '/featured.json'
+        fileNames.featuredCatsJSON = this.dataDir + '/featuredCats.json'
+        return fileNames;
+    }
 
     static userFileNames(vanity) {
         let fileNames = {};
-        fileNames.fullPlayerJSON = "data/" + vanity + "FullPlayerData.json";
-        fileNames.infoJSON = "data/" + vanity + "Data.json"
-        fileNames.bansJSON = "data/" + vanity + "Bans.json";
-        fileNames.levelJSON = "data/" + vanity + "LevelData.json";
-        fileNames.recentJSON = "data/" + vanity + "Recent.json";
-        fileNames.badgesJSON = "data/" + vanity + "badgesData.json";
-        fileNames.friendsJSON = "data/" + vanity + "FriendsData.json";
-        fileNames.gameListJSON = "data/" + vanity + "GameList.json";
-        fileNames.randGameJSON = "data/"+ vanity +"RandGame.json";
+        fileNames.fullPlayerJSON = this.dataDir + '/' + vanity + 'FullPlayerData.json';
+        fileNames.infoJSON = this.dataDir + '/' + vanity + this.dataDir + '.json'
+        fileNames.bansJSON = this.dataDir + '/' + vanity + 'Bans.json';
+        fileNames.levelJSON = this.dataDir + '/' + vanity + 'LevelData.json';
+        fileNames.recentJSON = this.dataDir + '/' + vanity + 'Recent.json';
+        fileNames.badgesJSON = this.dataDir + '/' + vanity + 'badgesData.json';
+        fileNames.friendsJSON = this.dataDir + '/' + vanity + 'FriendsData.json';
+        fileNames.gameListJSON = this.dataDir + '/' + vanity + 'GameList.json';
+        fileNames.randGameJSON = this.dataDir + '/'+ vanity +'RandGame.json';
         return fileNames;
     }
 
@@ -91,9 +112,9 @@ class InitPaths {
 
     static statsFileNames(vanity, appid) {
         let fileNames = {};
-        fileNames.userStatsJSON = "data/" + vanity + appid + "UserStatsData.json";
-        fileNames.statsJSON = "data/" + vanity + appid + "StatData.json";
-        fileNames.achievJSON = "data/" + vanity + appid + "AchievData.json";
+        fileNames.userStatsJSON = this.dataDir + '/' + vanity + appid + 'UserStatsData.json';
+        fileNames.statsJSON = this.dataDir + '/' + vanity + appid + 'StatData.json';
+        fileNames.achievJSON = this.dataDir + '/' + vanity + appid + 'AchievData.json';
         return fileNames;
     }
 
@@ -116,24 +137,258 @@ class InitPaths {
     }
 
     static vanityUserFileName(steamid){
-        return 'data/'+steamid+'vanity.json'
+        return this.dataDir + '/'+steamid+'vanity.json'
     }
 
     static serverFiles(){
         let fileNames={}
-        fileNames.appListJSON = "data/games.json"
-        fileNames.undefinedJSON = "data/undefined.json"
-        fileNames.pingJSON = "data/ping.json"
+        fileNames.appListJSON = this.dataDir + '/games.json'
+        fileNames.undefinedJSON = this.dataDir + '/undefined.json'
+        fileNames.pingJSON = this.dataDir + '/ping.json'
+        fileNames.ipLog = this.logDir + '/ips.log'
+        fileNames.consoleLog = this.logDir + '/console.log'
+        fileNames.ignore=[fileNames.undefinedJSON, fileNames.pingJSON]
         return fileNames;
     }
 
     static staticURLs(){
         let urls={}
-        urls.pingURL='https://api.steampowered.com/ISteamWebAPIUtil/GetServerInfo/v1/' + this.jsonOptions("?");
-        urls.appListURL='https://api.steampowered.com/ISteamApps/GetAppList/v2/' + this.jsonOptions("?");
+        urls.pingURL='https://api.steampowered.com/ISteamWebAPIUtil/GetServerInfo/v1/' + this.jsonOptions('?');
+        urls.appListURL='https://api.steampowered.com/ISteamApps/GetAppList/v2/' + this.jsonOptions('?');
+        urls.featuredURL='http://store.steampowered.com/api/featured/' + this.jsonOptions('?')
+        urls.featuredCatsURL='http://store.steampowered.com/api/featuredcategories/' + this.jsonOptions('?')
         return urls;
     }
 
+    static host(source = 'remote'){
+        if (source==='local'){
+            return `localhost:${server_port}`
+        }
+        else{
+            return 'https://steam-tools-nickesc.herokuapp.com'
+        }
+    }
+
+
+}
+
+function replaceAll(string, search, replace) {
+    return string.split(search).join(replace);
+}
+
+function writeLog(logLine, ip = null){
+    //writeLog(logLine);
+    let writeLine;
+    if (ip){
+        writeLine=`${currentTime} | ${ip} | ${logLine}\r\n`
+    } else{
+        writeLine=`${currentTime} | ${logLine}\r\n`
+    }
+    console.log(writeLine)
+
+    fs.appendFileSync(InitPaths.serverFiles().consoleLog,writeLine)
+
+}
+
+function clearDir(directory){
+    //const directory = 'test';
+    const ignore = InitPaths.serverFiles().ignore
+
+    fs.readdir(directory, (err, files) => {
+        if (err) throw err;
+
+        //writeLog(ignore)
+
+        for (let file of files) {
+            file=path.join(directory, file)
+
+            if (ignore.includes(file)===false) {
+                //writeLog(file)
+                fs.unlink(file, err => {
+                    if (err) throw err;
+                });
+                writeLog("Removed: "+file)
+            }
+        }
+    });
+}
+
+function tryAddToJson(key, source, json){
+    //
+    try {
+        json[key] = source[key]
+        return true
+    } catch (err){
+        //writeLog(err)
+        return false
+    }
+}
+
+function simplifyInfo(app) {
+    let simplifiedInfo = {
+
+    }
+    let temp={}
+
+
+    temp.platforms={}
+    temp.platforms.pc={}
+    temp.platforms.mac={}
+    temp.platforms.linux={}
+    tryAddToJson("windows",app.platforms,temp.platforms.pc)
+    tryAddToJson("mac",app.platforms,temp.platforms.mac)
+    tryAddToJson("linux",app.platforms,temp.platforms.linux)
+
+    temp.platforms.pc["available"]=temp.platforms.pc["windows"]
+    delete temp.platforms.pc["windows"]
+    temp.platforms.mac["available"]=temp.platforms.mac["mac"]
+    delete temp.platforms.mac["mac"]
+    temp.platforms.linux["available"]=temp.platforms.linux["linux"]
+    delete temp.platforms.linux["linux"]
+
+    tryAddToJson("pc_requirements",app,temp.platforms.pc)
+    tryAddToJson("mac_requirements",app,temp.platforms.mac)
+    tryAddToJson("linux_requirements",app,temp.platforms.linux)
+
+
+    temp.release={
+        "coming_soon":"",
+        "date":""
+    }
+    tryAddToJson("coming_soon",app.release_date, temp.release)
+    tryAddToJson("date", app.release_date,temp.release)
+
+
+    temp.support={
+        "url":"",
+        "email":""
+    }
+    tryAddToJson("url",app.support_info, temp.support)
+    tryAddToJson("email", app.support_info,temp.support)
+
+
+    temp.recommendations={}
+    tryAddToJson("recommendations",app,temp)
+    try{
+        temp.recommendations=temp.recommendations.total
+    } catch{
+        writeLog("no recommendations found for " + app.steam_appid)
+    }
+
+
+    tryAddToJson("genres",app,temp)
+    try {
+        temp.genreList = temp.genres
+        temp.genres = []
+        for (let i = 0; i < temp.genreList.length; i++) {
+            temp.genres.push(temp.genreList[i].description)
+        }
+    } catch {
+        writeLog("no genre found for " + app.steam_appid)
+    }
+
+    tryAddToJson("categories",app,temp)
+    try {
+        temp.categoryList = temp.categories
+        temp.categories = []
+        for (let i = 0; i < temp.categoryList.length; i++) {
+            temp.categories.push(temp.categoryList[i].description)
+        }
+    } catch {
+        writeLog("no categories found for " + app.steam_appid)
+    }
+
+    tryAddToJson("screenshots",app,temp)
+    try {
+        temp.screenshotList = temp.screenshots
+        temp.screenshots = []
+        for (let i = 0; i < temp.screenshotList.length; i++) {
+            temp.screenshots.push(temp.screenshotList[i].path_full)
+        }
+    }
+    catch{
+        writeLog("no screenshots found for " + app.steam_appid)
+    }
+
+
+
+
+    tryAddToJson("movies",app,temp)
+    try {
+        temp.movieList = temp.movies
+        temp.movies = []
+        for (let movie in temp.movieList) {
+            temp.movies.push({
+                "name": temp.movieList[movie].name,
+                "mp4": temp.movieList[movie].mp4.max,
+                "webm": temp.movieList[movie].webm.max,
+                "thumbnail": temp.movieList[movie].thumbnail
+            })
+        }
+    } catch{
+        writeLog("no screenshots found for " + app.steam_appid)
+    }
+
+    // top
+    let success={"success":true}
+    tryAddToJson("success",success,simplifiedInfo)
+    tryAddToJson("steam_appid",app,temp)
+    simplifiedInfo.appid=temp.steam_appid
+    tryAddToJson("name",app,simplifiedInfo)
+    tryAddToJson("required_age",app,simplifiedInfo)
+    //writeLog(tryAddToJson("price_overview",app,simplifiedInfo))
+    tryAddToJson("is_free",app,simplifiedInfo)
+    // base
+    tryAddToJson("type",app,simplifiedInfo)
+    //simplifiedInfo.price_overview={}
+    //tryAddToJson("is_free",app,simplifiedInfo)
+    //tryAddToJson("price_overview",app,simplifiedInfo)
+
+    simplifiedInfo.description={}
+    tryAddToJson("detailed_description",app,simplifiedInfo.description)
+    tryAddToJson("about_the_game",app,simplifiedInfo.description)
+    tryAddToJson("short_description",app,simplifiedInfo.description)
+    simplifiedInfo.media={}
+    tryAddToJson("header_image",app,simplifiedInfo.media)
+    tryAddToJson("background",app,simplifiedInfo.media)
+    tryAddToJson("website",app,simplifiedInfo)
+    tryAddToJson("publishers",app,simplifiedInfo)
+
+    // optional
+    tryAddToJson("developers",app,simplifiedInfo)
+    tryAddToJson("legal_notice",app,simplifiedInfo)
+    tryAddToJson("fullgame",app,simplifiedInfo)
+    tryAddToJson("demos",app,simplifiedInfo)
+    tryAddToJson("dlc",app,simplifiedInfo)
+    tryAddToJson("controller_support",app,simplifiedInfo)
+    tryAddToJson("metacritic",app,simplifiedInfo)
+
+    // temp
+    tryAddToJson("recommendations",temp,simplifiedInfo)
+    if (temp.genres[0]!==undefined) {
+        tryAddToJson("genres", temp, simplifiedInfo)
+    }
+
+    if (temp.categories[0]!==undefined) {
+        tryAddToJson("categories", temp, simplifiedInfo)
+    }
+
+
+    if (temp.screenshots[0]!==undefined) {
+
+        tryAddToJson("screenshots", temp, simplifiedInfo.media)
+    }
+
+    //writeLog(temp.movies[0])
+    if (temp.movies[0]!==undefined) {
+
+        tryAddToJson("movies", temp, simplifiedInfo.media)
+    }
+    tryAddToJson("platforms",temp,simplifiedInfo)
+    tryAddToJson("release",temp,simplifiedInfo)
+    tryAddToJson("support",temp,simplifiedInfo)
+
+    return simplifiedInfo
 }
 
 function getRandomInt(max) {
@@ -143,6 +398,7 @@ function getRandomInt(max) {
 function getRandomApp(apps){
     try {
         let randGameIndex = getRandomInt(apps.length - 1)
+        //writeLog(apps[randGameIndex])
         return apps[randGameIndex]
     }catch (err){
         return apps[0]
@@ -152,10 +408,19 @@ function getRandomApp(apps){
 function writeToJSONFile(url, jsonFileName, req, res, action) {
 
     try {
-        if (fs.existsSync(jsonFileName)===false) {
+
+        if (fs.existsSync(jsonFileName)===false || InitPaths.serverFiles().ignore.includes(jsonFileName)) {
+
             request.get(url, function(error, steamHttpResponse, steamHttpBody) {
                 try {
                     let data = JSON.parse(steamHttpBody);
+
+                    if (jsonFileName===InitPaths.serverFiles().pingJSON){
+
+                        const ip=req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+                        fs.appendFileSync(InitPaths.serverFiles().ipLog,ip)
+
+                    }
                     let jsonString = JSON.stringify(data);
 
                     fs.writeFileSync(jsonFileName, jsonString);
@@ -171,7 +436,7 @@ function writeToJSONFile(url, jsonFileName, req, res, action) {
             action(jsonFileName, req, res)
         }
     } catch(err) {
-        console.log(err)
+        writeLog(err)
     }
 
 }
@@ -191,33 +456,35 @@ function readFromJSONFile(jsonFileName){
     }
 }
 
-function deleteFile(filePath, reset = false, log = true){
-    //console.log("deletefile: "+reset)
-    if (filePath!==InitPaths.serverFiles().appListJSON && reset===false) {
+function deleteFile(filePath, override = false, log = true){
+    //writeLog("deletefile: "+reset)
+    const ignore = InitPaths.serverFiles().ignore
+    ignore.push(InitPaths.serverFiles().appListJSON)
+    if (ignore.includes(filePath)===false && override===false) {
         fs.unlink(filePath, function (err) {
             if (log) {
                 if (err && err.code === 'ENOENT') {
                     // file doens't exist
-                    console.info("File doesn't exist, won't remove it.");
+                    writeLog("File doesn't exist, won't remove it.");
                 } else if (err) {
                     // other errors, e.g. maybe we don't have enough permission
-                    console.info("Error occurred while trying to remove file");
+                    writeLog("Error occurred while trying to remove file");
                 } else {
-                    console.info("Removed: " + filePath);
+                    writeLog("Removed: " + filePath);
                 }
             }
         });
     }
-    if (reset===true){
+    if (override===true){
         fs.unlink(filePath, function (err) {
             if (err && err.code === 'ENOENT') {
                 // file doens't exist
-                console.info("File doesn't exist, won't remove it.");
+                writeLog("File doesn't exist, won't remove it.");
             } else if (err) {
                 // other errors, e.g. maybe we don't have enough permission
-                console.error("Error occurred while trying to remove file");
+                writeLog("Error occurred while trying to remove file");
             } else {
-                console.info("Removed: " + filePath);
+                writeLog("Removed: " + filePath);
             }
         });
     }
@@ -229,19 +496,19 @@ function sendUndefined(req, res){
         if (err) {
             console.error(err);
         } else {
-            console.log('Sent:', jsonFileName);
+            writeLog('Sent: ' + jsonFileName, req.ip);
         }
     });
 }
 
 function sendJSONFile(jsonFileName, req, res, reset=false){
-    //console.log("sendthefile: "+reset)
+    //writeLog("sendthefile: "+reset)
     if (reset===false){
         res.sendFile(jsonFileName, jsonFileOptions, function (err) {
             if (err) {
                 console.error(err);
             } else {
-                console.log('Sent:', jsonFileName);
+                writeLog('Sent: ' + jsonFileName, req.ip);
                 deleteFile(jsonFileName, false)
             }
         });
@@ -251,7 +518,7 @@ function sendJSONFile(jsonFileName, req, res, reset=false){
             if (err) {
                 console.error(err);
             } else {
-                console.log('Sent:', jsonFileName);
+                writeLog('Sent: ' + jsonFileName, req.ip);
                 deleteFile(jsonFileName, true)
             }
         });
@@ -287,6 +554,14 @@ function sendFullGameFromID(appid, req, res){
 
                         let fullInfo={}
                         fullInfo.info=infoData
+                        //writeLog(simplifyInfo(infoData.appid.data))
+                        if (infoData[appid].success) {
+                            fullInfo.info = simplifyInfo(infoData[appid].data)
+                        }
+
+
+                        //let filter=req.params.filter.split(",")
+                        //writeLog(filter)
                         fullInfo.news=newsData
                         fullInfo.schema=schemaData
                         fullInfo.achiev=achievData
@@ -304,14 +579,15 @@ function sendFullGameFromID(appid, req, res){
 
 }
 
-async function getIDFromVanityUser(vanityUser, jsonFileName, urlHead, req, res, log=false) {
+async function getIDFromVanityUser(vanityUser, jsonFileName, urlHead, req, res, log=true) {
 
     let idUrl = InitPaths.vanityUserURL(req,vanityUser);
 
     let response = await got(idUrl, {json: true})
     let id=response.body.response.steamid;
     if(log) {
-        console.log(vanityUser + " found; SteamID: " + id);
+        let ip=req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        writeLog(vanityUser + " found; SteamID: " + id, ip);
     }
 
     const myPromise = new Promise((resolve, reject) => {
@@ -382,7 +658,7 @@ function sendFullUserFromID(steamid, vanity, req, res){
 
 function sendUserStatsFromAppid(appid, steamid, vanity, req, res){
 
-    //console.log(steamid)
+    //writeLog(steamid)
     let fileNames=InitPaths.statsFileNames(vanity, appid);
     let urls=InitPaths.statsURLs(steamid, appid, req);
 
@@ -407,6 +683,91 @@ function sendUserStatsFromAppid(appid, steamid, vanity, req, res){
 
 }
 
+function simplifyFeature(feature){
+    return{
+        "id": feature.id,
+        "name": feature.name,
+        "discounted": feature.discounted,
+        "discountPercent": feature.discount_percent,
+        "originalPrice": feature.original_price,
+        "finalPrice": feature.final_price,
+        "image": feature.large_capsule_image,
+        "windows": feature.windows_available,
+        "mac": feature.mac_available,
+        "linux": feature.linux_available
+    }
+}
+
+function simplifyFeatured(featured){
+    let simplified=[]
+    for (let feature of featured){
+        simplified.push( simplifyFeature(feature))
+    }
+    return simplified
+}
+
+function sendFeatured(req, res){
+
+    let fileNames=InitPaths.featuredFileNames();
+    let urls=InitPaths.staticURLs();
+
+    //writeLog(urls, fileNames)
+
+    writeToJSONFile(urls.featuredURL,fileNames.featuredJSON,req,res,function(jsonFileName, req, res){
+
+        let featuredData = readFromJSONFile(fileNames.featuredJSON)
+        //writeLog(featuredData)
+        deleteFile(fileNames.featuredJSON)
+
+        writeToJSONFile(urls.featuredCatsURL,fileNames.featuredCatsJSON,req,res,function(jsonFileName, req, res){
+            let featuredCatsData = readFromJSONFile(fileNames.featuredCatsJSON)
+            deleteFile(fileNames.featuredCatsJSON)
+
+            let fullInfo={}
+
+            fullInfo.specials=simplifyFeatured(featuredCatsData.specials.items)
+            fullInfo.comingSoon=simplifyFeatured(featuredCatsData.coming_soon.items)
+            fullInfo.topSellers=simplifyFeatured(featuredCatsData.top_sellers.items)
+            fullInfo.newReleases=simplifyFeatured(featuredCatsData.new_releases.items)
+
+
+            //writeLog(fullInfo)
+
+            let platforms = []
+
+            platforms[0]=featuredData.featured_win
+            platforms[1]=featuredData.featured_mac
+            platforms[2]=featuredData.featured_linux
+
+            let ids=[]
+            let featured=[]
+
+            for (let platform of platforms){
+                for (let feature of platform){
+                    let id=feature.id
+                    if(ids.includes(id)===false){
+                        ids.push(id)
+                        featured.push(feature)
+                    }
+
+
+
+                }
+            }
+            //writeLog(featured,ids)
+
+            fullInfo.featured=simplifyFeatured(featured)
+
+
+            justWrite(fullInfo,fileNames.fullFeaturedJSON)
+
+            sendJSONFile(fileNames.fullFeaturedJSON,req, res)
+
+        });
+    });
+
+}
+
 
 // deprecated: no longer needed
 function sendGameFromID(appid, req, res) {
@@ -419,6 +780,7 @@ function sendGameFromID(appid, req, res) {
     //return jsonFileName
 
 };
+
 function deleteArrayOfPaths(fileNames){
     for(let i=0; i<fileNames.length; i++){
         deleteFile(fileNames[i])
@@ -435,6 +797,7 @@ app.get('/', function(req, res) {
     writeToJSONFile(url,jsonFileName,req,res,function(jsonFileName, req, res){
         sendJSONFile(jsonFileName,req, res)
     });
+    //clearDir(InitPaths.dataDir)
 
 
 });
@@ -489,20 +852,20 @@ app.get('/vanity/:steamid', function (req, res){
                 steamid.vanity=resp[0].personaname;
             }
             catch{
-                console.log("No vanity found for "+steamid.steamid)
+                writeLog("No vanity found for "+steamid.steamid)
             }
             try{
                 steamid.realName=resp[0].realname;
             }
             catch{
-                console.log("No real name found for "+steamid.steamid)
+                writeLog("No real name found for "+steamid.steamid)
             }
 
             let path = InitPaths.vanityUserFileName(steamid.steamid)
 
             justWrite(steamid,path)
             deleteFile(jsonFileName)
-            //console.log(steamid)
+            //writeLog(steamid)
             sendJSONFile(path,req, res)
         }
         catch{
@@ -549,6 +912,7 @@ app.get('/user/:user/games/rand', function(req, res) {
                 if (apps!==undefined) {
 
                     let randApp = getRandomApp(apps)
+                    //writeLog(randApp)
                     deleteFile(jsonFileName)
 
                     sendFullGameFromID(randApp.appid, req, res)
@@ -587,7 +951,7 @@ app.get('/apps', function(req, res) {
         if (req.query.reset==="true"){
             reset=true
         }
-        //console.log("query: "+reset)
+        //writeLog("query: "+reset)
         sendJSONFile(jsonFileName,req, res,reset)
     });
 });
@@ -600,6 +964,7 @@ app.get('/apps/rand', function(req, res) {
         let apps = JSON.parse(jsonFile).applist.apps;
 
         let randApp=getRandomApp(apps)
+        writeLog(randApp)
 
         sendFullGameFromID(randApp.appid,req,res)
     });
@@ -608,6 +973,12 @@ app.get('/apps/rand', function(req, res) {
 app.get('/apps/:appid/infoFull', function(req, res) {
 
     sendFullGameFromID(req.params.appid, req, res,)
+
+});
+
+app.get('/apps/featured', function(req, res) {
+
+    sendFeatured(req, res,)
 
 });
 
@@ -748,13 +1119,13 @@ app.get('/user/:user/games/:appid/stats', function(req, res) {
 });
 
 
+
 app.use('/static', express.static('public'));
 
-var port = 4000;
-var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
-var server_host = process.env.YOUR_HOST || '0.0.0.0';
+const source = InitPaths.host('remote')
+
 
 app.listen(server_port, server_host, function() {
-    console.log('Listening on port %d', server_port);
+    fs.appendFileSync(InitPaths.serverFiles().consoleLog,'------------------------------------------------------------\r\n')
+    writeLog('SERVER START',source);
 });
-//console.log('Listening on port ' + port);
