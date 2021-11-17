@@ -138,5 +138,5 @@ $RECYCLE.BIN/
 *.lnk
 
 help.txt
-
+SteamWebAPIKey.png
 # End of https://www.gitignore.io/api/node,macos,windows

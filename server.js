@@ -9,6 +9,8 @@ var app = express();
 
 app.use(cors());
 
+
+
 const jsonFileOptions = {
     root: path.join(__dirname)
 };
@@ -16,12 +18,15 @@ const jsonFileOptions = {
 var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
 var server_host = process.env.YOUR_HOST || '0.0.0.0';
 
-const ts = Date.now();
-let currentTime = new Date(ts).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }) + ' PST';
 
-currentTime = replaceAll(currentTime,' ','-')
-currentTime = replaceAll(currentTime,',','')
-
+function getTime()
+{
+    const ts = Date.now();
+    let currentTime = new Date(ts).toLocaleString('en-US', {timeZone: 'America/Los_Angeles'}) + ' PST';
+    currentTime = replaceAll(currentTime, ' ', '-')
+    currentTime = replaceAll(currentTime, ',', '')
+    return currentTime;
+}
 
 class InitPaths {
 
@@ -37,14 +42,17 @@ class InitPaths {
     }
 
     static gameFileNames(appid) {
+        const requestSeed = "_"+Math.floor(Math.random() * 100000000);
+        //console.log(requestSeed)
+
         let fileNames = {};
 
-        fileNames.fullGameJSON = this.dataDir + '/' + appid + 'FullGameData.json';
-        fileNames.infoJSON = this.dataDir + '/' + appid + 'GameData.json';
-        fileNames.newsJSON = this.dataDir + '/' + appid + 'NewsData.json';
-        fileNames.schemaJSON = this.dataDir + '/' + appid + 'SchemaData.json';
-        fileNames.achievJSON = this.dataDir + '/' + appid + 'GlobalAchievData.json';
-        fileNames.currentJSON = this.dataDir + '/' + appid + 'CurrentData.json';
+        fileNames.fullGameJSON = this.dataDir + '/' + appid + 'FullGameData' + requestSeed + '.json';
+        fileNames.infoJSON = this.dataDir + '/' + appid + 'GameData' + requestSeed + '.json';
+        fileNames.newsJSON = this.dataDir + '/' + appid + 'NewsData' + requestSeed + '.json';
+        fileNames.schemaJSON = this.dataDir + '/' + appid + 'SchemaData' + requestSeed + '.json';
+        fileNames.achievJSON = this.dataDir + '/' + appid + 'GlobalAchievData' + requestSeed + '.json';
+        fileNames.currentJSON = this.dataDir + '/' + appid + 'CurrentData' + requestSeed + '.json';
         return fileNames;
     }
 
@@ -59,24 +67,28 @@ class InitPaths {
     }
 
     static featuredFileNames(){
+        const requestSeed = "_"+Math.floor(Math.random() * 100000000);
+
         let fileNames={}
-        fileNames.fullFeaturedJSON = this.dataDir + '/fullFeatured.json'
-        fileNames.featuredJSON = this.dataDir + '/featured.json'
-        fileNames.featuredCatsJSON = this.dataDir + '/featuredCats.json'
+        fileNames.fullFeaturedJSON = this.dataDir + '/fullFeatured' + requestSeed + '.json'
+        fileNames.featuredJSON = this.dataDir + '/featured' + requestSeed + '.json'
+        fileNames.featuredCatsJSON = this.dataDir + '/featuredCats' + requestSeed + '.json'
         return fileNames;
     }
 
     static userFileNames(vanity) {
+        const requestSeed = "_"+Math.floor(Math.random() * 100000000);
+
         let fileNames = {};
-        fileNames.fullPlayerJSON = this.dataDir + '/' + vanity + 'FullPlayerData.json';
-        fileNames.infoJSON = this.dataDir + '/' + vanity + this.dataDir + '.json'
-        fileNames.bansJSON = this.dataDir + '/' + vanity + 'Bans.json';
-        fileNames.levelJSON = this.dataDir + '/' + vanity + 'LevelData.json';
-        fileNames.recentJSON = this.dataDir + '/' + vanity + 'Recent.json';
-        fileNames.badgesJSON = this.dataDir + '/' + vanity + 'badgesData.json';
-        fileNames.friendsJSON = this.dataDir + '/' + vanity + 'FriendsData.json';
-        fileNames.gameListJSON = this.dataDir + '/' + vanity + 'GameList.json';
-        fileNames.randGameJSON = this.dataDir + '/'+ vanity +'RandGame.json';
+        fileNames.fullPlayerJSON = this.dataDir + '/' + vanity + 'FullPlayerData' + requestSeed + '.json';
+        fileNames.infoJSON = this.dataDir + '/' + vanity + requestSeed + '.json'
+        fileNames.bansJSON = this.dataDir + '/' + vanity + 'Bans' + requestSeed + '.json';
+        fileNames.levelJSON = this.dataDir + '/' + vanity + 'LevelData' + requestSeed + '.json';
+        fileNames.recentJSON = this.dataDir + '/' + vanity + 'Recent' + requestSeed + '.json';
+        fileNames.badgesJSON = this.dataDir + '/' + vanity + 'badgesData' + requestSeed + '.json';
+        fileNames.friendsJSON = this.dataDir + '/' + vanity + 'FriendsData' + requestSeed + '.json';
+        fileNames.gameListJSON = this.dataDir + '/' + vanity + 'GameList' + requestSeed + '.json';
+        fileNames.randGameJSON = this.dataDir + '/'+ vanity +'RandGame' + requestSeed + '.json';
         return fileNames;
     }
 
@@ -111,10 +123,12 @@ class InitPaths {
 
 
     static statsFileNames(vanity, appid) {
+        const requestSeed = "_"+Math.floor(Math.random() * 100000000);
+
         let fileNames = {};
-        fileNames.userStatsJSON = this.dataDir + '/' + vanity + appid + 'UserStatsData.json';
-        fileNames.statsJSON = this.dataDir + '/' + vanity + appid + 'StatData.json';
-        fileNames.achievJSON = this.dataDir + '/' + vanity + appid + 'AchievData.json';
+        fileNames.userStatsJSON = this.dataDir + '/' + vanity + appid + 'UserStatsData' + requestSeed + '.json';
+        fileNames.statsJSON = this.dataDir + '/' + vanity + appid + 'StatData' + requestSeed + '.json';
+        fileNames.achievJSON = this.dataDir + '/' + vanity + appid + 'AchievData' + requestSeed + '.json';
         return fileNames;
     }
 
@@ -137,7 +151,9 @@ class InitPaths {
     }
 
     static vanityUserFileName(steamid){
-        return this.dataDir + '/'+steamid+'vanity.json'
+        const requestSeed = "_"+Math.floor(Math.random() * 100000000);
+
+        return this.dataDir + '/'+steamid+'vanity' + requestSeed + '.json'
     }
 
     static serverFiles(){
@@ -176,6 +192,8 @@ class InitPaths {
 
 }
 
+
+
 function replaceAll(string, search, replace) {
     return string.split(search).join(replace);
 }
@@ -184,9 +202,9 @@ function writeLog(logLine, ip = null){
     //writeLog(logLine);
     let writeLine;
     if (ip){
-        writeLine=`${currentTime} | ${ip} | ${logLine}\r\n`
+        writeLine=`${getTime()} | ${ip} | ${logLine}\r\n`
     } else{
-        writeLine=`${currentTime} | ${logLine}\r\n`
+        writeLine=`${getTime()} | ${logLine}\r\n`
     }
     console.log(writeLine)
 
@@ -226,6 +244,10 @@ function tryAddToJson(key, source, json){
         //writeLog(err)
         return false
     }
+}
+
+function simplifyNews(news){
+
 }
 
 function simplifyInfo(app) {
@@ -421,13 +443,27 @@ function writeToJSONFile(url, jsonFileName, req, res, action) {
 
                     if (jsonFileName===InitPaths.serverFiles().pingJSON){
 
+                        let ipLog=InitPaths.serverFiles().ipLog
                         const ip=getIP(req);
-                        fs.appendFileSync(InitPaths.serverFiles().ipLog,ip+',\r\n')
+                        fs.readFile(ipLog, 'utf8' , (err, data) => {
+                            if (err) {
+                                console.error(err)
+                                return
+                            }
+                            if(data.includes(ip)===false) {
+                                //console.log(data)
+                                fs.appendFileSync(ipLog,ip+',\r\n')
+                            }
+
+                        })
+
                         data.ip=ip
                     }
-                    let jsonString = JSON.stringify(data);
 
-                    fs.writeFileSync(jsonFileName, jsonString);
+                    justWrite(data,jsonFileName)
+
+                    //let jsonString = JSON.stringify(data);
+                    //fs.writeFileSync(jsonFileName, jsonString);
 
                     action(jsonFileName, req, res)
                 } catch(err){
@@ -447,6 +483,7 @@ function writeToJSONFile(url, jsonFileName, req, res, action) {
 
 function justWrite(object, jsonFileName) {
     //let data = JSON.parse(object)
+    object.disclaimer='TO USE THIS API YOUR IP IS PUBLICLY LOGGED'
     let jsonString = JSON.stringify(object);
     fs.writeFileSync(jsonFileName, jsonString);
 }
@@ -559,9 +596,57 @@ function sendFullGameFromID(appid, req, res){
                         let fullInfo={}
                         fullInfo.info=infoData
                         //writeLog(simplifyInfo(infoData.appid.data))
+
                         if (infoData[appid].success) {
                             fullInfo.info = simplifyInfo(infoData[appid].data)
                         }
+                        else{
+                            fullInfo.info = {"success":infoData[appid].success, "appid":appid}
+                        }
+
+
+                        let sample = {"appid":appid}
+                        try{
+                            sample.name=infoData[appid].data.name
+                        } catch {
+                            sample.name="undefined"
+                        }
+
+
+
+                        try{
+                            newsData=newsData.appnews.newsitems
+                        } catch {
+                            newsData=[]
+                        }
+
+                        try{
+                            schemaData=schemaData.game
+                        } catch {
+                            schemaData = []
+                        }
+
+                        /*
+                        try {
+                            if (currentData.response.player_count!==undefined) {
+                                fullInfo.info.currentPlayers = currentData.response.player_count
+                            }
+                            else{
+                                fullInfo.info.currentPlayers = currentData.response.result
+                            }
+                        } catch {
+                            fullInfo.info.currentPlayers = 0
+                        }
+
+                        /*try{
+                            console.log(currentData.response.player_count)
+                        } catch {
+                            console.log("yus")
+                            currentData={}
+                        }*/
+
+
+
 
 
                         //let filter=req.params.filter.split(",")
@@ -574,6 +659,7 @@ function sendFullGameFromID(appid, req, res){
                         justWrite(fullInfo,fileNames.fullGameJSON)
 
                         sendJSONFile(fileNames.fullGameJSON,req, res)
+                        writeLog("App: "+sample.appid+", "+sample.name)
 
                     });
                 });
@@ -772,7 +858,18 @@ function sendFeatured(req, res){
 }
 
 function getURL(req){
-    return req.protocol + '://' + req.get('host') + req.originalUrl;
+
+    let url=req.protocol + '://' + req.get('host') + req.originalUrl
+
+
+    if (url.includes("key")) {
+
+        const keyBlank = new URL(url);
+        keyBlank.searchParams.set('key', '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+        url = keyBlank.href
+    }
+
+    return url;
 }
 
 function getIP(req){
@@ -852,12 +949,14 @@ app.get('/user/:user/fullUser', function(req, res) {
     let vanity = req.params.user
     let jsonFileName=InitPaths.userFileNames(vanity).fullPlayerJSON;
     let urlHead = InitPaths.userHeads(req).infoHead;
+    //console.log(jsonFileName)
 
     getIDFromVanityUser(req.params.user, jsonFileName, urlHead, req, res)
         .then(value => { return (value); })
         .then(id => {
             writeToJSONFile(urlHead+id,jsonFileName,req,res,function(jsonFileName, req, res){
                 sendFullUserFromID(id, vanity, req, res)
+                deleteFile(jsonFileName)
             });
         })
 });
@@ -970,6 +1069,7 @@ app.get('/user/:user/games/:appid/userStats', function(req, res) {
         .then(id => {
             writeToJSONFile(urlHead+id,jsonFileName,req,res,function(jsonFileName, req, res){
                 sendUserStatsFromAppid(req.params.appid, id, req.params.user, req, res)
+                deleteFile(jsonFileName)
             });
         })
 });
@@ -1000,7 +1100,7 @@ app.get('/apps/rand', function(req, res) {
         let apps = JSON.parse(jsonFile).applist.apps;
 
         let randApp=getRandomApp(apps)
-        writeLog(randApp)
+        //writeLog(JSON.stringify(randApp))
 
         sendFullGameFromID(randApp.appid,req,res)
     });
