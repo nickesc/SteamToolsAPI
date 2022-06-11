@@ -1256,7 +1256,7 @@ app.get('/user/:user/games/:appid/stats', function(req, res) {
 
 app.use('/static', express.static('public'));
 
-const source = InitPaths.host('local')
+const source = InitPaths.host('remote')
 
 
 app.listen(server_port, server_host, function() {
