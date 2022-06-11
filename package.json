@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CrutchtheClutch/Localhost-Steam-API.git"
+    "url": "git+https://github.com/nickesc/SteamToolsAPI"
   },
   "keywords": [
     "steam-api",
@@ -27,10 +27,7 @@
     "steam",
     "steam-stats"
   ],
-  "author": "William Crutchfield",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/CrutchtheClutch/Localhost-Steam-API/issues"
-  },
-  "homepage": "https://github.com/CrutchtheClutch/Localhost-Steam-API#readme"
+  "author": "N. Escobar/nickesc <nickesc.media@gmail.com> (https://nickesc.com/)",
+  "license": "MIT",
+  "homepage": "https://nickesc.github.io"
 }

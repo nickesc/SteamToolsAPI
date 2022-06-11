@@ -9,8 +9,6 @@ var app = express();
 
 app.use(cors());
 
-
-
 const jsonFileOptions = {
     root: path.join(__dirname)
 };
@@ -483,7 +481,7 @@ function writeToJSONFile(url, jsonFileName, req, res, action) {
 
 function justWrite(object, jsonFileName) {
     //let data = JSON.parse(object)
-    object.disclaimer='TO USE THIS API YOUR IP IS PUBLICLY LOGGED'
+    //object.disclaimer='TO USE THIS API YOUR IP IS PUBLICLY LOGGED'
     let jsonString = JSON.stringify(object);
     fs.writeFileSync(jsonFileName, jsonString);
 }
@@ -873,7 +871,7 @@ function getURL(req){
 }
 
 function getIP(req){
-    return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    return "0.0.0.0";
 }
 
 
@@ -1258,10 +1256,14 @@ app.get('/user/:user/games/:appid/stats', function(req, res) {
 
 app.use('/static', express.static('public'));
 
-const source = InitPaths.host('remote')
+const source = InitPaths.host('local')
 
 
 app.listen(server_port, server_host, function() {
     fs.appendFileSync(InitPaths.serverFiles().consoleLog,'------------------------------------------------------------\r\n')
     writeLog('SERVER START',source);
 });
+
+
+// TODO: simplify the rest of game -- figure out stats and achievement, make sure current is working
+// TODO: simplify user
